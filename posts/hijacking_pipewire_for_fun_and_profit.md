@@ -2,7 +2,7 @@
 title: Hijacking PipeWire for Fun and Profit
 date: '2024-12-24T00:00:00.000Z'
 author: Hayden Gray
-draft: true
+draft: false
 tags:
   - Odin
   - Programming
