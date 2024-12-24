@@ -52,7 +52,7 @@ a picture can speak a thousand words. Using the excelent tool
 [qpwgraph](https://github.com/rncbc/qpwgraph)), users can view
 (and edit!) their own node graphs for their system:
 
-/* insert photo here */
+<img src="/assets/hijacking_pipewire_for_fun_and_profit/node_graph.png" />
 
 So what do these fancy boxes and lines mean? Well, each of these
 boxes represents a **node** in the graph and each line represents
@@ -277,7 +277,7 @@ in the future.
 
 This gives us the following architecture:
 
-/* insert image here */
+<img src="/assets/hijacking_pipewire_for_fun_and_profit/diagram.png"/>
 
 ### mixd
 So, let's get to the meat of the problem, the daemon.
