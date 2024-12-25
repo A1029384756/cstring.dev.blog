@@ -47,7 +47,7 @@ it before we start *doing* anything with it.
 
 ### The Node Graph
 Long explanations are all well and good but this is a case where
-a picture can speak a thousand words. Using the excelent tool
+a picture can speak a thousand words. Using the excellent tool
 [Helvum](https://gitlab.freedesktop.org/pipewire/helvum) (or 
 [qpwgraph](https://github.com/rncbc/qpwgraph)), users can view
 (and edit!) their own node graphs for their system:
@@ -131,16 +131,10 @@ allowing us to write the following program (executable with
 package main
 
 import pw "./pipewire"
-import "core:os/os2"
 import "core:fmt"
 
 main :: proc() {
-	argc := len(os2.args)
-	argv := make([dynamic]cstring, 0, argc)
-	for arg in os2.args {
-		append(&argv, strings.clone_to_cstring(arg))
-	}
-	pw.init(&argc, raw_data(argv[:]))
+	pw.init(nil, nil)
 
     fmt.println(
 		"Using PipeWire library version:",
@@ -151,11 +145,15 @@ main :: proc() {
 }
 ```
 
-Although this looks a little uglier at first (mostly
-around having to convert the `[]string` to `[^]cstring`),
-using Odin will allow us access to some nice language
+> In this case, we are safe to pass `nil` to 
+> `pw_init` as we have no arguments that we
+> need to pass to `libpipewire` itself.
+
+The benefit to using Odin here might not yet
+be apparent but in short, it will allow us access to 
+use some nice language
 features like dynamic arrays, maps, explicit allocators,
-and a few more features that we will use later.
+and the excellent `core` library.
 
 This covers most of our bases for bindings — any time
 we need a new procedure, we can simply translate the types
