@@ -25,21 +25,21 @@ in various ways to reach a target destination. It itself sits on top
 of various audio and video backends and acts as a common interface
 that can be interacted with via a set of [programs](https://docs.pipewire.org/page_programs.html)
 provided by the project, config files, or `libpipewire`, a wrapper around
-the PipeWire socket itself. Each of these methods have their advantages;
+the PipeWire socket itself. Each of these methods have their advantages:
 with the programs, you can take the high-level tools given to you to
-interface with PipeWire and combine them in unique ways without having
-to delve deep into the internals of the audio system itself. Although
+interface with PipeWire and get pretty far without having
+to delve deep into the internals of media routing. Although
 this is arguably the simplest to get started with, it does relegate
-you to more "script-like" approaches to interacting with the audio
-server and does incur the overhead of launching a program every time
+you to more "script-like" approaches of interacting with the audio
+server and incurs the overhead of launching a program every time
 you need to do something. Config files, as their names imply, give
 the user the capability to *configure* the audio server and filtering
-chain itself at startup. This approach once again works extremely well
+chain itself at startup. This approach works extremely well
 when users want a static approach to their configuration but do fall
 short when more complex runtime processing is required. The final
 interaction method, `libpipewire`, is the most complex but flexible
 way to interact with PipeWire and gives a large amount of control
-over every aspect of how it functions.
+to the developer.
 
 Although this gives a high-level overview of what PipeWire is and
 how we interact with it, we need to be a little more familiar with
@@ -79,14 +79,13 @@ interact with them via code (without having to invoke subprocesses).
 ## libpipewire
 Let's get going in our first `libpipewire` application. Fortunately,
 the docs are relatively good and full program examples can be
-found by looking at the source code of the provided programs.
+found by looking at the source code of tools like `pw-cli`.
 
-Gettings started is as simple as writing the following C program:
+Getting started is as simple as writing the following C program:
 ```c
 #include <pipewire/pipewire.h>
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     pw_init(&argc, &argv);
 
     fprintf(stdout, "Using pipewire library version %s\n"
@@ -102,7 +101,7 @@ Unfortunately, I am a masochist and an Odin user (jury is
 still out on whether those two are linked).
 That means that I need to either generate or
 write bindings. Although generation is a valid approach, writing
-them by hand should give a better idea of how the library actually
+them by hand should give a me better idea of how the library 
 works and make it so that I can better ensure mapping of concepts
 from PipeWire to Odin (which will come in handy as we will see
 later).
@@ -124,8 +123,8 @@ foreign pipewire {
 }
 ```
 This is relatively simple, just telling the linker to link
-`libpipewire` and giving some procedures to link with and
-allows us to write the following program (executable with
+`libpipewire` and giving some procedures to link with, 
+allowing us to write the following program (executable with
 `odin run .`):
 
 ```odin
@@ -158,10 +157,10 @@ using Odin will allow us access to some nice language
 features like dynamic arrays, maps, explicit allocators,
 and a few more features that we will use later.
 
-This covers most of our bases in bindings, any time
+This covers most of our bases for bindings — any time
 we need a new procedure, we can simply translate the types
 from C to Odin and mirror the procedures and structs on
-the Odin side. There is however, a few glaring issues: 
+the Odin side. There are however, a few glaring issues: 
 our arch-nemeses `static inline` and macros (why binding generators
 shouldn't be trusted to "just work" with this project).
 PipeWire *heavily* relies on `libspa`, a header-only library
@@ -204,24 +203,23 @@ the workload a fair bit.
 Remember a couple minutes earlier when I mentioned those
 `mixologist` nodes? Well, here's where they come into play:
 a few months ago a friend purchased a SteelSeries
-headset. This headset had a feature called ChatMix accessible through
+headset. This headset had a feature called ChatMix, accessible through
 the (half-working) Sonar software. ChatMix, in short, allows
 users to create virtual audio devices and use a wheel on
 the side of the headset to **mix** volumes between those
 audio devices.
 
-This can be extremely useful in certain cases where people
-may be in long running **Discord** calls and also have
+This can be extremely useful in certain cases where you
+may be in a long running **Discord** call and also have
 audio playing from another program (say a browser running
 [FoundryVTT](https://foundryvtt.com/)). Rather than
-constantly popping in and out of the volume mixer for each
-program (or the operating system one) to make sure
-the audio levels are good, it can be much nicer to have
-some sort of hardware control that allows users to adjust
-the volume on the fly without having to open any programs.
+constantly popping in and out of the volume mixer
+to make sure the audio levels are good,
+it can be much nicer to have some sort of hardware 
+control that allows you to adjust the volume on the fly.
 
 ### Pitfalls of ChatMix
-Of course, it ChatMix does have a few shortcomings:
+Of course, ChatMix does have a few shortcomings:
 
 - Relegated to SteelSeries headsets
 - No Linux support
@@ -243,9 +241,11 @@ no apparent reason, resetting all of that configuration.
 This is where we get to use our previously-attained
 PipeWire knowledge:
 - What is a "virtual device" in the context of ChatMix?
-    - Loopback
+    - Loopback, where the volume can be adjusted within
+      the loopback node, not the program
 - Is there a way to control the "plumbing" of applications?
-    - **Rewiring** links in the node graph
+    - **Rewiring** links in the node graph based on program
+      name is doable via `libpipewire`
 
 So, in short, would it be *that* difficult to write
 a program that does what Sonar + ChatMix does with
@@ -334,9 +334,9 @@ fields, those will come in handy later.
 The third section holds the meat of the application
 state such as the state for each "virtual device",
 the rules to use for application routing, the volume,
-and some state to do with passthrough (for things
+and some state to handle passthrough (for things
 like screen sharing). Finally, the last section just holds
-data for general control flow as well as IPC.
+data for general control flow and IPC.
 Although this gives an idea of the data we keep
 on-hand, this doesn't explain *how* we actually do the
 routing. For this, we need to prepare ourselves for
@@ -428,7 +428,7 @@ that events come in.
 > of the procedure.
 > This is something that Odin allows on arena
 > allocators (no-op on non-arenas) to free
-> everthing allocated with that allocator.
+> everything allocated with that allocator.
 
 Each of these handlers do what they say on the tin
 and make connections in the virtual graph that
@@ -463,7 +463,7 @@ Program :: struct {
 }
 ```
 
-This format is extremely simple, just holding
+This format is extremely simple, consisting of
 a [tagged union](https://en.wikipedia.org/wiki/Tagged_union)
 with the two kinds of messages. One can either set
 or modulate the volume by a set value, the other
@@ -484,7 +484,7 @@ msg_err := cbor.unmarshal(string(buf[:bytes_read]), &msg)
 
 > CBOR is also in Odin's `core` library
 > meaning that you can use it without installing
-> anything extra. In fact, aside no external
+> anything extra. In fact, no external
 > libraries have been needed for either the
 > cli or daemon.
 
@@ -500,12 +500,23 @@ Flags:
 	-shift_volume:<f32>                 | volume to increment nodes
 ```
 
-## Next Steps
+## End Result
 So where does all of this work put us? Well, the 
 project can be found on [GitHub](https://github.com/A1029384756/mixologist)
 and is something I run on my personal machine.
 Keyboard control can be set up in the keybinds
 section of any major desktop environment.
+Configuration is relatively simple, right now
+being a **newline separated** list in
+`~/.config/mixologist/mixologist.conf`. Hot
+reloading ensures that users can also modify
+the config file directly to update the program
+list. Some work additionally was put into
+creating a [Systemd](https://systemd.io/) unit
+to start the program on login and an RPM package
+to make installing on RPM distributions simple.
+
+## Next Steps
 What's left then?
 - A GUI that allows users to configure rules
   without having to touch the config file.
