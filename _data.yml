@@ -1,10 +1,10 @@
 lang: en
 home:
-  welcome: 'Systems Programming, GameDev, and DevOps'
+  welcome: 'Systems Programming, Game Dev, and DevOps'
 menu_links: []
 metas:
   site: cstring.dev
-  description: 'Programming, Systems, and DevOps'
+  description: 'Nerd Stuff'
   title: =title
   image: =image
   twitter: '@username'
