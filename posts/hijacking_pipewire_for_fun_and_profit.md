@@ -101,7 +101,7 @@ Unfortunately, I am a masochist and an Odin user (jury is
 still out on whether those two are linked).
 That means that I need to either generate or
 write bindings. Although generation is a valid approach, writing
-them by hand should give a me better idea of how the library 
+them by hand should give me a better idea of how the library 
 works and make it so that I can better ensure mapping of concepts
 from PipeWire to Odin (which will come in handy as we will see
 later).
@@ -150,7 +150,7 @@ main :: proc() {
 > need to pass to `libpipewire` itself.
 
 The benefit to using Odin here might not yet
-be apparent but in short, it will allow us access to 
+be apparent but in short, it will allow us to 
 use some nice language
 features like dynamic arrays, maps, explicit allocators,
 and the excellent `core` library.
