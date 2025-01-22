@@ -1,6 +1,6 @@
 ---
 title: IPC From Scratch
-date: '2025-01-19T00:00:00.000Z'
+date: '2025-01-22T00:00:00.000Z'
 author: Hayden Gray
 draft: false
 tags:
