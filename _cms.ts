@@ -1,8 +1,5 @@
 import lumeCMS from "lume/cms/mod.ts";
 import { Field } from "lume/cms/types.ts";
-import GitHub from "lume/cms/storage/github.ts";
-import { Octokit } from "npm:octokit";
-import "jsr:@std/dotenv";
 
 const cms = lumeCMS();
 
@@ -91,6 +88,13 @@ cms.collection(
   [
     "title: text",
     url,
+    {
+      name: "author",
+      type: "text",
+      init(field, { data }) {
+        field.options = data.site?.search.values("author");
+      },
+    },
     "date: date",
     {
       name: "draft",
@@ -181,18 +185,5 @@ cms.collection(
 );
 
 cms.upload("uploads: Uploaded files", "src:uploads");
-
-const client = new Octokit({
-  auth: Deno.env.get("GH_PAT"),
-});
-
-cms.storage(
-  "gh",
-  new GitHub({
-    client,
-    owner: "username",
-    repo: "example",
-  }),
-);
 
 export default cms;

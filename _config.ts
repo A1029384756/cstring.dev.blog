@@ -1,14 +1,13 @@
 import lume from "lume/mod.ts";
-import picture from "lume/plugins/picture.ts";
-import transformImages from "lume/plugins/transform_images.ts";
-import blog from "blog/mod.ts";
+import plugins, {Options} from "./plugins.ts";
 
 const site = lume({
+  src: "./src",
   location: new URL("https://cstring.dev"),
 });
 
-site.use(blog());
-site.use(picture());
-site.use(transformImages());
+const options: Options = {}
+
+site.use(plugins(options));
 
 export default site;

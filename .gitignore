@@ -1,3 +1,5 @@
+posts/*.md
+src/uploads
 _site
-_cache
-.env
+_bin
+deno.lock
